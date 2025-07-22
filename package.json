@@ -55,6 +55,7 @@
     "remark-sectionize": "^2.1.0",
     "sanitize-html": "^2.17.0",
     "sharp": "^0.34.2",
+    "simple-icons": "link:@iconify-json\\simple-icons",
     "stylus": "^0.64.0",
     "svelte": "^5.34.8",
     "tailwindcss": "^3.4.17",
@@ -64,6 +65,7 @@
   "devDependencies": {
     "@astrojs/ts-plugin": "^1.10.4",
     "@biomejs/biome": "2.0.6",
+    "@iconify-json/simple-icons": "^1.2.44",
     "@rollup/plugin-yaml": "^4.1.2",
     "@types/hast": "^3.0.4",
     "@types/markdown-it": "^14.1.2",
