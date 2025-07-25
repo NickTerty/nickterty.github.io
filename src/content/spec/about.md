@@ -1,11 +1,13 @@
 # About
 
+### Info
 - Study in university, his major is Applied Mathematics.
 - He is an osu! player, but he almost plays with Relax.
 - Start learning computer science for his aspiration.
 
-::github{repo="NickTerty/nickterty.github.io"}
+### Chinese
+- 你可以叫我尼克小烏龜，簡化成尼克或尼克烏龜甚至是烏龜都行。
+- 不要拿著數學題目問我任何問題，除非我是你的助教或我有表明會教你。
 
-> ### Sources of images used in this site
-> - [空](https://www.pixiv.net/artworks/127834043) by [kaipo](https://www.pixiv.net/users/13313480)
-> - [ナギサ](https://www.pixiv.net/artworks/130476792) by [朽ち袖](https://www.pixiv.net/users/109035571)
+### The source of template is Fuwari.
+::github{repo="saicaca/fuwari"}
