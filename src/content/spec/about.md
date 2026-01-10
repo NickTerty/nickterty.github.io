@@ -2,8 +2,8 @@
 
 ### Info
 - Study in university, his major is Applied Mathematics.
-- He is an osu! player, but he almost plays with Relax.
-- Start learning computer science for his aspiration.
+- He was an osu! player before.
+- Have learned basic programming language: C, C++, Python, LaTeX(but not mastered)
 
 ### Chinese
 - 你可以叫我尼克小烏龜，簡化成尼克或尼克烏龜甚至是烏龜都行。
