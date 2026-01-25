@@ -5,7 +5,7 @@ description: ''
 image: ''
 tags: [osu!, 6WC, Tryouts]
 category: '6WC Tryouts'
-draft: false 
+draft: true 
 lang: ''
 ---
 # 陣容公告
