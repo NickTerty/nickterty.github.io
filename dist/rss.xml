@@ -1,407 +1,362 @@
-<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>NickTerty&apos;s Website</title><description>A personal blog and portfolio.</description><link>https://nickterty.github.io/</link><language>en</language><item><title>6WC 2025 Taiwan Roster Reveal</title><link>https://nickterty.github.io/posts/6wc25_roster_reveal/</link><guid isPermaLink="true">https://nickterty.github.io/posts/6wc25_roster_reveal/</guid><pubDate>Thu, 31 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;陣容公告&lt;/h1&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>NickTerty&apos;s Website</title><description>A personal blog and portfolio.</description><link>https://nickterty.github.io/</link><language>en</language><item><title>C++ Pointer</title><link>https://nickterty.github.io/posts/cpp_pointer/</link><guid isPermaLink="true">https://nickterty.github.io/posts/cpp_pointer/</guid><description>沒什麼，就只是你看到一個白癡連指標都不會做出來的筆記</description><pubDate>Sun, 01 Mar 2026 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;因為我是程式智障，所以我需要做這個筆記讓我牢固整個pointer(指標)的概念。&lt;/p&gt;
+&lt;h2&gt;基本觀念與 Code Examples&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+using namespace std;
+
+int main(){
+    /*
+    This is how we declare the pointer.
+    (Data Type) *(Variable name);
+    or
+    (Data Type)* (Variable name);
+
+    The pointer itself is also a variable. It has its own memory address, 
+    and it is used to store the memory address of another variable.
+    */
+    int *ptr = nullptr; // 養成好習慣, 未定向前先設為 nullptr
+
+    /*
+    Now we declare a normal integer. 
+    If we make &quot;ptr&quot; store the address of &quot;num&quot;, 
+    then when we output &quot;*ptr&quot;, it will return the integer from &quot;num&quot; (10).
+    Outputting &quot;ptr&quot; directly will give the memory address.
+    */
+    int num = 10;
+    ptr = &amp;amp;num;
+
+    cout &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl; // 10
+    cout &amp;lt;&amp;lt; &amp;amp;num &amp;lt;&amp;lt; endl; // 0x5ffec4 (The memory address of &quot;num&quot;)
+    cout &amp;lt;&amp;lt; ptr &amp;lt;&amp;lt; endl; // 0x5ffec4
+    cout &amp;lt;&amp;lt; *ptr &amp;lt;&amp;lt; endl; // 10
+
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;觀念釐清&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pointer 的本質: Pointer 本身也是一個 variable, 它在記憶體中同樣會佔用專屬的空間, 並且有它自己的 memory address. 差別在於, 一般的 variable 儲存的是普通的 data, 而 pointer 儲存的資料是別人的 memory address.&lt;/li&gt;
+&lt;li&gt;Dereference: 當我們 output ptr 的時候, 得到的是 memory address. 必須透過 dereference operator (也就是加上 *), 去 output *ptr, 才會順著 address 找到並 return 裡面的 value.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;Memory Address
+
+0x5ffec4  +------------------+
+          |       10         |  &amp;lt;--- int num = 10;
+          +------------------+
+          (Normal variable: num)
+
+               ^
+               | 儲存了 num 的 address (ptr = &amp;amp;num;)
+               |
+
+0x67f120  +------------------+
+          |    0x5ffec4      |  &amp;lt;--- int *ptr = nullptr;
+          +------------------+       ptr = &amp;amp;num;
+          (Pointer variable: ptr)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;進階核心觀念與 Code Examples&lt;/h2&gt;
+&lt;p&gt;下面是AI幫我整理出來的，但他們的概念我很眼熟&lt;/p&gt;
+&lt;h3&gt;nullptr (空指標)&lt;/h3&gt;
+&lt;p&gt;在 C++ 中, 如果 declare 一個 pointer 但沒有立刻讓它指向某個 variable, 它會變成 wild pointer (隨機指向 memory 中的某個未知位置), 這非常危險. 良好的習慣是將尚未使用的 pointer 設為 &lt;code&gt;nullptr&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+using namespace std;
+
+int main(){
+    int *ptr1; // 壞習慣: wild pointer, 指向未知位址
+    int *ptr2 = nullptr; // 好習慣: 明確表示目前沒有指向任何東西
+
+    if (ptr2 == nullptr) {
+        cout &amp;lt;&amp;lt; &quot;ptr2 is safe to check.&quot; &amp;lt;&amp;lt; endl;
+    }
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Pass by Pointer (透過指標傳遞)&lt;/h3&gt;
+&lt;p&gt;將 pointer 當作 parameter 傳進 function. 這樣可以在 function 內部直接修改外部 variable 的值, 因為你是直接對 memory address 進行操作, 而不是只修改 local copy.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+using namespace std;
+
+// function 接收 pointer 作為 parameter
+void addTen(int *ptr) {
+    *ptr = *ptr + 10; // 透過 dereference 修改原本位址裡的值
+}
+
+int main(){
+    int num = 5;
+    cout &amp;lt;&amp;lt; &quot;Before: &quot; &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl; // 5
+
+    addTen(&amp;amp;num); // 傳遞 num 的 memory address
+
+    cout &amp;lt;&amp;lt; &quot;After: &quot; &amp;lt;&amp;lt; num &amp;lt;&amp;lt; endl;  // 15
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Pointer Arithmetic (指標算術)&lt;/h3&gt;
+&lt;p&gt;當對 pointer 進行加減運算時, 它實際移動的 memory address 大小取決於 Data Type 的大小. 例如 int 通常佔 4 bytes, 所以 ptr + 1 會讓 address 往前推進 4 bytes.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+using namespace std;
+
+int main(){
+    int arr[3] = {10, 20, 30};
+    int *ptr = arr; // ptr 指向 array 的第一個 element (10)
+
+    cout &amp;lt;&amp;lt; &quot;Address: &quot; &amp;lt;&amp;lt; ptr &amp;lt;&amp;lt; &quot;, Value: &quot; &amp;lt;&amp;lt; *ptr &amp;lt;&amp;lt; endl;
+    
+    ptr = ptr + 1; // pointer 往前移動一個 int 的大小
+    cout &amp;lt;&amp;lt; &quot;Address: &quot; &amp;lt;&amp;lt; ptr &amp;lt;&amp;lt; &quot;, Value: &quot; &amp;lt;&amp;lt; *ptr &amp;lt;&amp;lt; endl; // 輸出 20
+    
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Pointers and Arrays (指標與陣列)&lt;/h3&gt;
+&lt;p&gt;在 C++ 裡, array 的名稱本質上可以 decay (退化) 成一個指向該 array 第一個 element 的 pointer. 因此, &lt;code&gt;arr[i]&lt;/code&gt; 其實等同於 &lt;code&gt;*(arr + i)&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+using namespace std;
+
+int main(){
+    int arr[3] = {100, 200, 300};
+    int *ptr = arr; // array 名稱可以直接當作 pointer 使用
+
+    for(int i = 0; i &amp;lt; 3; i++) {
+        // 以下兩種寫法結果完全相同
+        cout &amp;lt;&amp;lt; &quot;Array syntax: &quot; &amp;lt;&amp;lt; arr[i] &amp;lt;&amp;lt; endl;
+        cout &amp;lt;&amp;lt; &quot;Pointer syntax: &quot; &amp;lt;&amp;lt; *(ptr + i) &amp;lt;&amp;lt; endl;
+    }
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Dynamic Memory Allocation (new 與 delete)&lt;/h3&gt;
+&lt;p&gt;當你不確定需要多大的 space, 或者想在 runtime 才決定 array 大小時, 可以用 pointer 動態配置 memory. 記得用完後必須手動釋放 memory, 否則會造成 memory leak.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+using namespace std;
+
+int main(){
+    int size;
+    cout &amp;lt;&amp;lt; &quot;Enter array size: &quot;;
+    cin &amp;gt;&amp;gt; size;
+
+    // 在 runtime 動態配置 memory
+    int *dynamicArr = new int[size]; 
+
+    for(int i = 0; i &amp;lt; size; i++) {
+        dynamicArr[i] = i * 10;
+        cout &amp;lt;&amp;lt; dynamicArr[i] &amp;lt;&amp;lt; &quot; &quot;;
+    }
+    cout &amp;lt;&amp;lt; endl;
+
+    // 用完必須手動釋放 memory
+    delete[] dynamicArr; 
+    
+    // 釋放後將 pointer 設為 nullptr 是好習慣
+    dynamicArr = nullptr; 
+
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;一個簡單的Example&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;#include&amp;lt;iostream&amp;gt;
+using namespace std;
+
+void ptrSwap(int *num1, int *num2){
+    int temp = *num1;
+    *num1 = *num2;
+    *num2 = temp;
+}
+
+int main(){
+    int a = 10, b = 5;
+
+    cout &amp;lt;&amp;lt; &quot;Before: &quot; &amp;lt;&amp;lt; endl;
+    cout &amp;lt;&amp;lt; &quot;a = &quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+    cout &amp;lt;&amp;lt; &quot;b = &quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+    
+    ptrSwap(&amp;amp;a, &amp;amp;b);
+
+    cout &amp;lt;&amp;lt; &quot;After: &quot; &amp;lt;&amp;lt; endl;
+    cout &amp;lt;&amp;lt; &quot;a = &quot; &amp;lt;&amp;lt; a &amp;lt;&amp;lt; endl;
+    cout &amp;lt;&amp;lt; &quot;b = &quot; &amp;lt;&amp;lt; b &amp;lt;&amp;lt; endl;
+
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Output:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Before: 
+a = 10
+b = 5
+After: 
+a = 5
+b = 10
+&lt;/code&gt;&lt;/pre&gt;
+</content:encoded></item><item><title>大二上修課心得(114-1)</title><link>https://nickterty.github.io/posts/114-1course/</link><guid isPermaLink="true">https://nickterty.github.io/posts/114-1course/</guid><pubDate>Sun, 25 Jan 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;某地名大學應用數學系大二上修課心得&lt;/h1&gt;
+&lt;h3&gt;Introduction&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;這學期有去修資工系的程式設計，老師覺得我課堂表現不錯(他說能寫程式就歡迎讀資工)，建議我轉系，於是我這學年就是努力的拚成績，升大三轉到資工。&lt;/li&gt;
+&lt;li&gt;因為可能會有一點點爭議，所以我不打算公開詳細成績，但我會視情形透漏我最後學期成績大概幾分或給排名讓你參考。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;應用數學系&lt;/h2&gt;
+&lt;h3&gt;高等微積分(一) Advanced Calculus (I)&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;開課班級&lt;/th&gt;
+&lt;th&gt;授課教師&lt;/th&gt;
+&lt;th&gt;學分&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;應用數學系二年級&lt;/td&gt;
+&lt;td&gt;葉宗鑫&lt;/td&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;計分方式:&lt;/strong&gt; 兩次作業、期中考、期末考、平時成績(點名)&lt;/p&gt;
+&lt;p&gt;高微真的跟微積分差很多，大一老師沒教數列，所以他期中花了很多時間在教數列，然後還要高微本身對於數列的嚴謹分析討論，對我來說我學數列是一個高端局，但我是低端。
+老師會勾一些要交的作業，期中考、期末考前各交一次，只要有照助教的指示寫，會有一定的成績，但你可以自己的方式推理證明，證明清晰合理助教會給更高的分數。
+考試的話，我是覺得老師已經放很多水了，寫定義或定理佔了整份考卷幾乎兩成，但我腦子不好，定義定理引理我都理解，但證明就比較難建構出嚴謹分析證明，我覺得還算正常但需要花時間去練習改善自己的高微困境。&lt;/p&gt;
+&lt;p&gt;:::Important
+我最後只拿到了80~85，但排名有前3，何意味?
+:::&lt;/p&gt;
+&lt;h3&gt;代數學(一) Algebra (I)&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;開課班級&lt;/th&gt;
+&lt;th&gt;授課教師&lt;/th&gt;
+&lt;th&gt;學分&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;應用數學系二年級&lt;/td&gt;
+&lt;td&gt;孫新民&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;計分方式:&lt;/strong&gt; 四次小考、期中考、期末考、平時成績(上台寫或回答問題)&lt;/p&gt;
+&lt;p&gt;代數學(一)主要討論群論(Group Theory)，其實觀念內容跟高微比起來是比較簡單一點，但他是抽象代數，我學到後面完全不知道到底在學什麼。
+這老師的教學風格我已經不用多說了，有興趣可以看我大一的心得
+很遺憾，下學期沒有代數二，老師說他要休息一學期(我猜他也快退休了)。&lt;/p&gt;
+&lt;h3&gt;微分方程 Differential Equation&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;開課班級&lt;/th&gt;
+&lt;th&gt;授課教師&lt;/th&gt;
+&lt;th&gt;學分&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;應用數學系二年級&lt;/td&gt;
+&lt;td&gt;葉宗鑫&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;計分方式:&lt;/strong&gt; 兩次作業、期中考、期末考、平時成績(點名)&lt;/p&gt;
+&lt;p&gt;就沒有傅立葉的工程數學，數學系的微方其實跟外系沒有太大的差距，都是有專注在說要怎麼算，唯一的差距就是沒有傅立葉。這門課算好過的，但我太廢了，成績沒有很好看。&lt;/p&gt;
+&lt;h2&gt;資工系&lt;/h2&gt;
+&lt;h3&gt;計算機程式設計(一) Computer Programming Design I&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;開課班級&lt;/th&gt;
+&lt;th&gt;授課教師&lt;/th&gt;
+&lt;th&gt;學分&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;資訊工程學系一年級&lt;/td&gt;
+&lt;td&gt;林朝興&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;計分方式:&lt;/strong&gt; 四次考試、平時成績(點名)
+&lt;strong&gt;成績:&lt;/strong&gt;&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;項目&lt;/th&gt;
+&lt;th&gt;分數&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;第一次期中考&lt;/td&gt;
+&lt;td&gt;98&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;第二次期中考&lt;/td&gt;
+&lt;td&gt;81&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;第三次期中考&lt;/td&gt;
+&lt;td&gt;88&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;期末考&lt;/td&gt;
+&lt;td&gt;?&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;平時成績(點名)&lt;/td&gt;
+&lt;td&gt;我都有到&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;學期成績&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;92&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 &lt;blockquote&gt;
-&lt;p&gt;經過一段時間的選拔，Tryouts 階段已正式落幕。以下是成功入選的名單，祝福他們在接下來的比賽中表現亮眼，為台灣爭光。&lt;/p&gt;
+&lt;p&gt;題外話，我只展現這門課的成績。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;h2&gt;Major League&lt;/h2&gt;
-&lt;h3&gt;Taiwan (Taiwan A)&lt;/h3&gt;
+&lt;p&gt;這門課教C語言，因為我暑假有學C++，所以我沒有太大的程式障礙。老師超好，雖然考試都是原文，但題目沒有到難以理解，上限大概是高一英文。
+這老師是我在資工遇到的兩位貴人之一，所以我對這老師很尊敬，有可能因為他是系主任。&lt;/p&gt;
+&lt;h3&gt;計算機程式設計實習(一) 	Computer Programming Design Practices I&lt;/h3&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th&gt;Player&lt;/th&gt;
-&lt;th&gt;Note&lt;/th&gt;
+&lt;th&gt;開課班級&lt;/th&gt;
+&lt;th&gt;授課教師&lt;/th&gt;
+&lt;th&gt;學分&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/8957119&quot;&gt;WTHBRO&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Captain&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/8682905&quot;&gt;murorachi&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/21919776&quot;&gt;Runick Fountain&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/34456633&quot;&gt;Axeria&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/14911407&quot;&gt;Richliu&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/28395271&quot;&gt;koori21&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/12776443&quot;&gt;_TheSZtar&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/5320843&quot;&gt;Lograys_&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;資訊工程學系一年級&lt;/td&gt;
+&lt;td&gt;林朝興&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h2&gt;Minor League&lt;/h2&gt;
-&lt;h3&gt;Taiwan B&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;計分方式:&lt;/strong&gt; 五次作業抽考、平時成績(點名)&lt;/p&gt;
+&lt;p&gt;正課的副產品，但他是必修，主要都是助教來教我們使用終端機(Terminal)的指令，還有一點點基本的git，然後會抽考正課的作業，但除了教指令還有抽考，剩下時間就是老師可能我們太爛會利用實習課叫我們寫100多行的code或手畫遞迴，其他時候都沒什麼事情。&lt;/p&gt;
+&lt;h3&gt;邏輯設計 Logic Design&lt;/h3&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th&gt;Player&lt;/th&gt;
-&lt;th&gt;Note&lt;/th&gt;
+&lt;th&gt;開課班級&lt;/th&gt;
+&lt;th&gt;授課教師&lt;/th&gt;
+&lt;th&gt;學分&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/14884864&quot;&gt;TheStepAside&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Captain&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/336104&quot;&gt;969363565&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/19287762&quot;&gt;Alymetic&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/29972221&quot;&gt;KieAson&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/111092&quot;&gt;command6104&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/17515783&quot;&gt;AFKII&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/31262592&quot;&gt;NatSu1098&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/6522043&quot;&gt;Ekomu&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;資訊工程學系二年級&lt;/td&gt;
+&lt;td&gt;江育綺&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3&gt;Taiwan C&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Player&lt;/th&gt;
-&lt;th&gt;Note&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/14224193&quot;&gt;Magician8910&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Captain&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/28249096&quot;&gt;sayoco0822&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/3977960&quot;&gt;OTSFD&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/22623652&quot;&gt;Eric0730&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/3496358&quot;&gt;small Q&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/7242675&quot;&gt;Ablank92&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/9136159&quot;&gt;Eggurooru&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/30097855&quot;&gt;Na1sy&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;Taiwan D&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Player&lt;/th&gt;
-&lt;th&gt;Note&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/35417200&quot;&gt;EllEvEn11&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Captain&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/20007350&quot;&gt;shioshadow&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/37688876&quot;&gt;[LiEE San]&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/30211050&quot;&gt;Hoyiqiang&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/21465518&quot;&gt;Alanpan100&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/32876565&quot;&gt;878077616&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/16367021&quot;&gt;Fine Motion&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/13198242&quot;&gt;Awasaka&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h2&gt;後勤團隊 Organization (如同虛設或影子)&lt;/h2&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;osu Username&lt;/th&gt;
-&lt;th&gt;Position&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/17847990&quot;&gt;NickTerty&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Admin&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/13519117&quot;&gt;pdpd123&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Admin&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/15184992&quot;&gt;Summer_Ouo&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Admin, Coach&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/33689349&quot;&gt;luke920118&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;General Manager&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/17792515&quot;&gt;daiimu&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Manager&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/4489605&quot;&gt;eric44168&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Manager&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/11006601&quot;&gt;KiTRa-Rbc&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Head Coach&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/14583408&quot;&gt;WhiteLing_0713&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Coach&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/14224193&quot;&gt;Magician8910&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Big Captain&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;a href=&quot;https://osu.ppy.sh/users/23580903&quot;&gt;ruimi&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;Big Captain(Designate)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;如有其他人加入後勤團隊，會更新&lt;/p&gt;
-&lt;h1&gt;與6TMT有關的&lt;/h1&gt;
-&lt;p&gt;以下是台灣代表隊的成員在6TMT時的成績排名。&lt;/p&gt;
-&lt;h3&gt;Taiwan (Taiwan A)&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Player&lt;/th&gt;
-&lt;th&gt;6TMT Result&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;WTHBRO&lt;/td&gt;
-&lt;td&gt;Champion&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;murorachi&lt;/td&gt;
-&lt;td&gt;4th (Playoffs Round 3)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Runick Fountain&lt;/td&gt;
-&lt;td&gt;5-6th (Playoffs Round 2)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Axeria&lt;/td&gt;
-&lt;td&gt;5-6th (Playoffs Round 2)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Richliu&lt;/td&gt;
-&lt;td&gt;Runner-up&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;koori21&lt;/td&gt;
-&lt;td&gt;7-8th (Playoffs Round 1)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;_TheSZtar&lt;/td&gt;
-&lt;td&gt;7-8th (Playoffs Round 1)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Lograys_&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;Taiwan B&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Player&lt;/th&gt;
-&lt;th&gt;6TMT Result&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;TheStepAside&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;969363565&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Alymetic&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;KieAson&lt;/td&gt;
-&lt;td&gt;9-10th (Group Stage)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;command6104&lt;/td&gt;
-&lt;td&gt;Champion&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;AFKII&lt;/td&gt;
-&lt;td&gt;7-8th (Playoffs Round 1)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;NatSu1098&lt;/td&gt;
-&lt;td&gt;5-6th (Playoffs Round 2)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Ekomu&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;Taiwan C&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Player&lt;/th&gt;
-&lt;th&gt;6TMT Result&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Magician8910&lt;/td&gt;
-&lt;td&gt;3rd (Losers Bracket Final)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;sayoco0822&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;OTSFD&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Eric0730&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;small Q&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Ablank92&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Eggurooru&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Na1sy&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;Taiwan D&lt;/h3&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;Player&lt;/th&gt;
-&lt;th&gt;6TMT Result&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;EllEvEn11&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;shioshadow&lt;/td&gt;
-&lt;td&gt;9-10th (Group Stage)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;[LiEE San]&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Hoyiqiang&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Alanpan100&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;878077616&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Fine Motion&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Awasaka&lt;/td&gt;
-&lt;td&gt;未參賽&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;計分方式:&lt;/strong&gt; 期中考、期末考、平時成績、期末專案加分&lt;/p&gt;
+&lt;p&gt;新來的老師，我都叫她江姐姐，我覺得她教得很認真，而且你回答她的問題會給你很大的鼓勵。
+這門課主要教數值運算(不限於2進位)、布林代數、卡諾圖、電路組合以及多工器和正反器，前半部我覺得算簡單，但後面真的比較難，我很慶幸江姐姐只要我們畫圖和判斷就好。
+考試的部分，她都是出她派的作業和講義的內容，沒有到太難，但我太爛了沒有考很好。
+但她給了我們很多加分的機會，讓我可以最後有86分。&lt;/p&gt;
 </content:encoded></item><item><title>6TMT回饋表單的回應</title><link>https://nickterty.github.io/posts/6tmt_feedback/</link><guid isPermaLink="true">https://nickterty.github.io/posts/6tmt_feedback/</guid><pubDate>Fri, 11 Jul 2025 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;前言&lt;/h2&gt;
 &lt;p&gt;感謝大家參與本次的6TMT，無論你自己的比賽成績滿不滿意，或者是員工們的表現如何，願意投入在這「小圈圈」的比賽其實不多，希望大家能持續關注之後6WC台灣代表隊的表現。&lt;/p&gt;
 &lt;p&gt;回饋的部分，我其實有點氣餒，就是玩家填回饋表單的數量是員工的1/3倍，有可能工作人員為了抽獎才導致Staffs的填答率比玩家高。雖然不強迫每個玩家都要填，但是希望給出一些建設性意見可以有助於主辦甚至是整個工作人員調整的方向。&lt;/p&gt;
